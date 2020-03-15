@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<!-- Copyright 2020 Abdul Rahman Dabbour
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+<robot name="mobile" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+  <!-- Fixed odom definition -->
+  <link name="odom" />
+
+  <!-- Chassis definition -->
+  <link name="chassis">
+    <inertial>
+      <mass value="${chassis_mass}" />
+      <xacro:cuboid_inertia h="${chassis_height}" w="${chassis_width}" l="${chassis_length}" m="${chassis_mass}" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}" />
+      </geometry>
+      <material name="green" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_chassis_joint" type="fixed">
+    <origin xyz="0 0 ${dwheel_radius}" rpy="0 0 0" />
+    <parent link="odom" />
+    <child link="chassis" />
+  </joint>
+  I
+  <!-- Left driven wheel definition -->
+  <xacro:dwheel prefix="left" reflect="1" />
+
+  <!-- Right driven wheel definition -->
+  <xacro:dwheel prefix="right" reflect="-1" />
+
+  <!-- Caster wheel definitions -->
+  <xacro:cwheel prefix="topleft" x_reflect="1" y_reflect="1" />
+  <xacro:cwheel prefix="bottomleft" x_reflect="1" y_reflect="-1" />
+  <xacro:cwheel prefix="topright" x_reflect="-1" y_reflect="1" />
+  <xacro:cwheel prefix="bottomright" x_reflect="-1" y_reflect="-1" />
+
+  <!-- Hokuyo Lasers -->
+  <xacro:laser prefix="topleft" x_reflect="1" y_reflect="1" />
+  <xacro:laser prefix="bottomright" x_reflect="-1" y_reflect="-1" />
+
+</robot>

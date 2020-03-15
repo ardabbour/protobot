@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+<!-- Copyright 2020 Abdul Rahman Dabbour
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+<robot name="protobot" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+  <!-- Xacro includes -->
+  <xacro:include filename="$(find protobot)/urdf/materials.xacro" />
+  <xacro:include filename="$(find protobot)/urdf/macros.xacro" />
+  <xacro:include filename="$(find protobot)/urdf/gazebo.xacro" />
+
+  <!-- Mobile base -->
+  <!-- Chassis properties -->
+  <xacro:property name="chassis_height" value="0.1" />
+  <xacro:property name="chassis_length" value="1" />
+  <xacro:property name="chassis_width" value="0.5" />
+  <xacro:property name="chassis_mass" value="5" />
+
+  <!-- Driven wheels properties -->
+  <xacro:property name="dwheel_mass" value="0.5" />
+  <xacro:property name="dwheel_width" value="0.1" />
+  <xacro:property name="dwheel_radius" value="0.125" />
+
+  <!-- Castor wheel properties -->
+  <xacro:property name="cwheel_mass" value="0.5" />
+  <xacro:property name="cwheel_radius" value="${((dwheel_radius-(chassis_height/2))/2)*0.99}" />
+
+  <!-- Hokuyo properties -->
+  <xacro:property name="laser_mass" value="1e-5" />
+  <xacro:property name="laser_side" value="${((dwheel_radius-(chassis_height/2))/2)*1.5}" />
+  <xacro:property name="laser_height" value="${laser_side*2}" />
+
+  <xacro:include filename="$(find protobot)/urdf/mobile.xacro" />
+
+  <!-- Mainpulator -->
+  <xacro:arg name="manipulator" default="true" />
+  <xacro:property name="manipulator" value="$(arg manipulator)" />
+  <xacro:if value="${manipulator == 'true' or manipulator}">
+    <!-- End effector properties -->
+    <xacro:property name="endeffector_mass" value="0.1" />
+    <xacro:property name="endeffector_width" value="0.02" />
+    <xacro:property name="endeffector_length" value="0.1" />
+    <xacro:property name="endeffector_height" value="0.2" />
+
+    <!-- Axel offset properties -->
+    <xacro:property name="axel_offset" value="0.005" />
+
+    <!-- Gear 0 properties -->
+    <xacro:property name="gear0_mass" value="0.5" />
+    <xacro:property name="gear0_radius" value="0.075" />
+    <xacro:property name="gear0_height" value="0.2" />
+
+    <!-- Gear 2 properties -->
+    <xacro:property name="gear2_mass" value="0.25" />
+    <xacro:property name="gear2_radius" value="0.09" />
+    <xacro:property name="gear2_height" value="0.02" />
+
+    <!-- Link 1 properties -->
+    <xacro:property name="alink1_mass" value="1" />
+    <xacro:property name="alink1_radius" value="0.075" />
+    <xacro:property name="alink1_height" value="0.2" />
+
+    <!-- Link 2 properties -->
+    <xacro:property name="alink2_mass" value="1" />
+    <xacro:property name="alink2_radius" value="0.075" />
+    <xacro:property name="alink2_height" value="0.2" />
+
+    <!-- Link 3 properties -->
+    <xacro:property name="alink3_mass" value="1" />
+    <xacro:property name="alink3_radius" value="0.075" />
+    <xacro:property name="alink3_height" value="0.2" />
+
+    <!-- Link 4 properties -->
+    <xacro:property name="alink4_mass" value="1" />
+    <xacro:property name="alink4_radius" value="0.075" />
+    <xacro:property name="alink4_height" value="0.2" />
+
+    <!-- Link 5 properties -->
+    <xacro:property name="alink5_mass" value="1" />
+    <xacro:property name="alink5_radius" value="0.075" />
+    <xacro:property name="alink5_height" value="0.2" />
+
+    <!-- Link 6 properties -->
+    <xacro:property name="alink6_mass" value="1" />
+    <xacro:property name="alink6_radius" value="0.075" />
+    <xacro:property name="alink6_height" value="0.2" />
+
+    <xacro:include filename="$(find protobot)/urdf/manipulator.xacro" />
+  </xacro:if>
+</robot>

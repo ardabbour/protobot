@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<package format="2">
+  <name>protobot</name>
+  <version>0.1.0</version>
+  <description>The description files of the protobot robot.</description>
+
+  <maintainer email="ardabbour@gmail.com">Abdul Rahman Dabbour</maintainer>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>gazebo_ros_pkgs</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros_control</exec_depend>
+  <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+</package>

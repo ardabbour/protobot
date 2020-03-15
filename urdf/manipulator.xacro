@@ -1,0 +1,167 @@
+<?xml version="1.0" ?>
+<!-- Copyright 2020 Abdul Rahman Dabbour
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+<robot name="manipulator" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Link 1 (Base link) -->
+  <link name="alink1">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${alink1_radius}" length="${alink1_height}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${alink1_radius}" length="${alink1_height}" />
+      </geometry>
+      <material name="orange" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${alink1_mass}" />
+      <xacro:cylinder_inertia r="${alink1_radius}" h="${alink1_height}" m="${alink1_mass}" />
+    </inertial>
+  </link>
+  <joint name="chassis_to_alink1" type="fixed">
+    <origin xyz="0 0 ${(alink1_height / 2) + (chassis_height / 2)}" rpy="0 0 0" />
+    <parent link="chassis" />
+    <child link="alink1" />
+  </joint>
+
+  <!-- Links 2-6 -->
+  <xacro:alink index="2" radius="${alink2_radius}" height="${alink2_height}" prev_height="${alink1_height}" mass="${alink2_mass}" axis="2" prev_axis="2" />
+  <xacro:alink index="3" radius="${alink3_radius}" height="${alink3_height}" prev_height="${alink2_height}" mass="${alink3_mass}" axis="0" prev_axis="2" />
+  <xacro:alink index="4" radius="${alink4_radius}" height="${alink4_height}" prev_height="${alink3_height}" mass="${alink4_mass}" axis="0" prev_axis="0" />
+  <xacro:alink index="5" radius="${alink5_radius}" height="${alink5_height}" prev_height="${alink4_height}" mass="${alink5_mass}" axis="2" prev_axis="0" />
+  <xacro:alink index="6" radius="${alink6_radius}" height="${alink6_height}" prev_height="${alink5_height}" mass="${alink6_mass}" axis="0" prev_axis="2" />
+
+  <!-- End effector -->
+  <link name="endeffector_gear">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${gear2_radius}" length="${gear2_height}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${gear2_radius}" length="${gear2_height}" />
+      </geometry>
+      <material name="darkgrey" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${gear2_mass}" />
+      <xacro:cylinder_inertia r="${gear2_radius}" h="${gear2_height}" m="${gear2_mass}" />
+    </inertial>
+  </link>
+  <joint name="alink6_to_endeffector_gear_joint" type="revolute">
+    <axis xyz="0 0 1" rpy="0 0 0" />
+    <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+    <origin xyz="0 0 ${-((gear2_height / 2) + (alink6_height / 2))}" rpy="${pi} 0 0" />
+    <parent link="alink6" />
+    <child link="endeffector_gear" />
+  </joint>
+  <transmission name="alink6_to_endeffector_gear_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="alink6_to_endeffector_gear_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="alink6_to_endeffector_gear_actuator">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+
+  <link name="endeffector_left">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${endeffector_length} ${endeffector_width} ${endeffector_height}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${endeffector_length} ${endeffector_width} ${endeffector_height}" />
+      </geometry>
+      <material name="darkgrey" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${endeffector_mass}" />
+      <xacro:cuboid_inertia l="${endeffector_length}" w="${endeffector_width}" h="${endeffector_height}" m="${endeffector_mass}" />
+    </inertial>
+  </link>
+  <joint name="endeffector_gear_to_endeffector_left_joint" type="prismatic">
+    <axis xyz="0 1 0" rpy="0 0 0" />
+    <limit effort="30" velocity="1.0" lower="${endeffector_width}" upper="${endeffector_width*2}" />
+    <origin xyz="0 0 ${(gear2_height / 2) + (endeffector_height / 2)}" rpy="0 0 0" />
+    <parent link="endeffector_gear" />
+    <child link="endeffector_left" />
+  </joint>
+  <transmission name="endeffector_gear_to_endeffector_left_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="endeffector_gear_to_endeffector_left_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="endeffector_gear_to_endeffector_left_actuator">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+
+  <link name="endeffector_right">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${endeffector_length} ${endeffector_width} ${endeffector_height}" />
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="${endeffector_length} ${endeffector_width} ${endeffector_height}" />
+      </geometry>
+      <material name="darkgrey" />
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="${endeffector_mass}" />
+      <xacro:cuboid_inertia l="${endeffector_length}" w="${endeffector_width}" h="${endeffector_height}" m="${endeffector_mass}" />
+    </inertial>
+  </link>
+  <joint name="endeffector_gear_to_endeffector_right_joint" type="prismatic">
+    <axis xyz="0 1 0" rpy="0 0 0" />
+    <limit effort="30" velocity="1.0" lower="${-(endeffector_width*2)}" upper="${-endeffector_width}" />
+    <origin xyz="0 0 ${(gear2_height / 2) + (endeffector_height / 2)}" rpy="0 0 0" />
+    <parent link="endeffector_gear" />
+    <child link="endeffector_right" />
+  </joint>
+  <transmission name="endeffector_gear_to_endeffector_right_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="endeffector_gear_to_endeffector_right_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="endeffector_gear_to_endeffector_right_actuator">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+</robot>

@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<!-- Copyright 2020 Abdul Rahman Dabbour
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+<launch>
+
+  <arg name="viz_rviz" default="true" />
+  <arg name="viz_gazebo" default="true" />
+  <arg name="sim_paused" default="false" />
+  <arg name="manipulator" default="true" />
+
+  <!-- Load robot description into ROS param server -->
+  <param name="robot_description"
+         command="$(find xacro)/xacro
+                 '$(find protobot)/urdf/protobot.xacro'
+                 manipulator:=$(arg manipulator)" />
+
+  <group if="$(arg manipulator)">
+    <!-- Load joint controller configurations to parameter server -->
+    <rosparam file="$(find protobot)/config/manipulator_control.yaml"
+              command="load"/>
+
+    <!-- Load the controllers -->
+    <node name="controller_spawner"
+          pkg="controller_manager"
+          type="spawner"
+          args="joint1_position_controller
+                joint2_position_controller
+                joint3_position_controller
+                joint4_position_controller
+                joint5_position_controller
+                joint6_position_controller
+                gripper_left_position_controller
+                gripper_right_position_controller
+                joint_state_controller" />
+  </group>
+
+  <group unless="$(arg manipulator)">
+    <node name="joint_state_publisher"
+          pkg="joint_state_publisher"
+          type="joint_state_publisher" />
+  </group>
+
+  <!-- Combine joint states with robot description to publish TF transforms -->
+  <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher" />
+
+  <!-- Rviz -->
+  <group if="$(arg viz_rviz)">
+    <node name="rviz"
+          pkg="rviz"
+          type="rviz"
+          args="-d $(find protobot)/rviz/protobot.rviz" />
+  </group>
+
+  <!-- Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time"
+         default="true" />
+    <arg name="gui"
+         value="$(arg viz_gazebo)" />
+    <arg name="paused"
+         value="$(arg sim_paused)" />
+  </include>
+  <node name="protobot_spawner"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        args="-urdf -param robot_description -model protobot" />
+
+</launch>

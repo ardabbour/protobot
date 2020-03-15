@@ -1,0 +1,258 @@
+<?xml version="1.0" ?>
+<!-- Copyright 2020 Abdul Rahman Dabbour
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+<robot name="gazebo" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+  <gazebo reference="chassis">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="right_dwheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo reference="left_dwheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo reference="topleft_cwheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="topright_cwheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="bottomleft_cwheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="bottomright_cwheel">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="topleft_laser">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+  <gazebo reference="bottomright_laser">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+  <gazebo reference="left_dwheel_bumper1">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="right_dwheel_bumper1">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="left_dwheel_bumper2">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="right_dwheel_bumper2">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="left_dwheel_bumper3">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="right_dwheel_bumper3">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="alink1">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+
+  <gazebo reference="alink1">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink1">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink1_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink2">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink2_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink3">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink3_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink4">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink4_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink5">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink5_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink6">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="alink6_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="endeffector_gear">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="endeffector_left">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="endeffector_right">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="right_dwheel_joint">
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <mu1>10.0</mu1>
+    <mu2>1.0</mu2>
+    <fdir1>1 0 0</fdir1>
+    <maxVel>1.0</maxVel>
+    <minDepth>0.00</minDepth>
+  </gazebo>
+
+  <gazebo reference="left_dwheel_joint">
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <mu1>10.0</mu1>
+    <mu2>1.0</mu2>
+    <fdir1>1 0 0</fdir1>
+    <maxVel>1.0</maxVel>
+    <minDepth>0.00</minDepth>
+  </gazebo>
+  <gazebo reference="topleft_laser">
+    <sensor type="gpu_ray" name="topleft_laser">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-2.35619449</min_angle>
+            <max_angle>2.35619449</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
+        <topicName>scan1</topicName>
+        <frameName>topleft_laser</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  <gazebo reference="bottomright_laser">
+    <sensor type="gpu_ray" name="bottomright_laser">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-2.35619449</min_angle>
+            <max_angle>2.35619449</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
+        <topicName>scan2</topicName>
+        <frameName>bottomright_laser</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>50</updateRate>
+      <rosDebugLevel>na</rosDebugLevel>
+      <publishTf>true</publishTf>
+      <publishOdomTF>true</publishOdomTF>
+      <publishWheelTF>false</publishWheelTF>
+      <publishWheelJointState>true</publishWheelJointState>
+      <wheelAcceleration>0</wheelAcceleration>
+      <wheelTorque>5</wheelTorque>
+      <leftJoint>left_dwheel_joint</leftJoint>
+      <rightJoint>right_dwheel_joint</rightJoint>
+      <covariance_x>0.01</covariance_x>
+      <covariance_y>0.01</covariance_y>
+      <covariance_yaw>0.01</covariance_yaw>
+      <wheelSeparation>0.4</wheelSeparation>
+      <wheelDiameter>0.2</wheelDiameter>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometrySource>encoder</odometrySource>
+      <robotBaseFrame>chassis</robotBaseFrame>
+    </plugin>
+  </gazebo>
+</robot>

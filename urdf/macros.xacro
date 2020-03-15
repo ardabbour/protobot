@@ -1,0 +1,310 @@
+<?xml version="1.0" ?>
+<!-- Copyright 2020 Abdul Rahman Dabbour
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+<robot name="macros" xmlns:xacro="https://www.ros.org/wiki/xacro">
+
+  <!-- Macros for calculating inertia matrices -->
+  <xacro:macro name="cuboid_inertia" params="h w l m">
+    <inertia ixx="${(m/12)*((w*w)+(h*h))}" iyy="${(m/12)*((h*h)+(l*l))}" izz="${(m/12)*((w*w)+(l*l))}" ixy="0" ixz="0" iyz="0" />
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="r h m">
+    <inertia ixx="${(m/12)*((3*r*r)+(h*h))}" iyy="${(m/12)*((3*r*r)+(h*h))}" izz="${(m/2)*(r*r)}" ixy="0" ixz="0" iyz="0" />
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="r m">
+    <inertia ixx="${2*m*r*r/5}" ixy="0" ixz="0" iyy="${2*m*r*r/5}" iyz="0" izz="${2*m*r*r/5}" />
+  </xacro:macro>
+
+  <!-- Driven wheels macro -->
+  <xacro:macro name="dwheel" params="prefix reflect">
+
+    <link name="${prefix}_dwheel">
+      <inertial>
+        <mass value="${dwheel_mass}" />
+        <xacro:cylinder_inertia r="${dwheel_radius}" h="${dwheel_width}" m="${dwheel_mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <geometry>
+          <cylinder radius="${dwheel_radius}" length="${dwheel_width}" />
+        </geometry>
+        <material name="red" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <geometry>
+          <cylinder radius="${dwheel_radius}" length="${dwheel_width}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}_dwheel_joint" type="continuous">
+      <axis xyz="0 1 0" rpy="0 0 0" />
+      <parent link="chassis" />
+      <child link="${prefix}_dwheel" />
+      <origin xyz="0 ${reflect*((chassis_width/2)+((dwheel_width/2) + 0.005))} 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${prefix}_dwheel_bumper1">
+      <inertial>
+        <mass value="${dwheel_mass}" />
+        <xacro:cuboid_inertia l="${((chassis_length - (dwheel_radius*2))/2)*0.9}" w="${dwheel_width*2}" h="${chassis_height}" m="${laser_mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${((chassis_length - ((dwheel_radius + 0.01)*2))/2)} ${dwheel_width*2} ${chassis_height}" />
+        </geometry>
+        <material name="green" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${((chassis_length - ((dwheel_radius + 0.01)*2))/2)} ${dwheel_width*2} ${chassis_height}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="chassis_to_${prefix}_dwheel_bumper1" type="fixed">
+      <parent link="chassis" />
+      <child link="${prefix}_dwheel_bumper1" />
+      <origin xyz="${reflect*(((dwheel_radius + 0.01)) + ((((chassis_length - ((dwheel_radius + 0.01)*2))/2))/2))} ${reflect*((chassis_width/2)+((dwheel_width*2)/2))} 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${prefix}_dwheel_bumper2">
+      <inertial>
+        <mass value="${dwheel_mass}" />
+        <xacro:cuboid_inertia l="${((chassis_length - ((dwheel_radius + 0.01)*2))/2)}" w="${dwheel_width*2}" h="${chassis_height}" m="${laser_mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${((chassis_length - ((dwheel_radius + 0.01)*2))/2)} ${dwheel_width*2} ${chassis_height}" />
+        </geometry>
+        <material name="green" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${((chassis_length - ((dwheel_radius + 0.01)*2))/2)} ${dwheel_width*2} ${chassis_height}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="chassis_to_${prefix}_dwheel_bumper2" type="fixed">
+      <parent link="chassis" />
+      <child link="${prefix}_dwheel_bumper2" />
+      <origin xyz="${-reflect*(((dwheel_radius + 0.01)) + ((((chassis_length - ((dwheel_radius + 0.01)*2))/2))/2))} ${reflect*((chassis_width/2)+((dwheel_width*2)/2))} 0" rpy="0 0 0" />
+    </joint>
+
+    <link name="${prefix}_dwheel_bumper3">
+      <inertial>
+        <mass value="${dwheel_mass}" />
+        <xacro:cuboid_inertia l="${((chassis_length - ((dwheel_radius + 0.01)*2))/2)}" w="${dwheel_width*2}" h="${chassis_height}" m="${laser_mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${(dwheel_radius + 0.01)*2} ${dwheel_width - 0.01} ${chassis_height}" />
+        </geometry>
+        <material name="green" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${(dwheel_radius + 0.01)*2} ${dwheel_width - 0.01} ${chassis_height}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="chassis_to_${prefix}_dwheel_bumper3" type="fixed">
+      <parent link="chassis" />
+      <child link="${prefix}_dwheel_bumper3" />
+      <origin xyz="0 ${reflect*((chassis_width/2)+((dwheel_width*3)/2) + 0.005)} 0" rpy="0 0 0" />
+    </joint>
+  </xacro:macro>
+
+  <!-- Castor wheels macro -->
+  <xacro:macro name="cwheel" params="prefix x_reflect y_reflect">
+
+    <link name="${prefix}_cwheel">
+      <inertial>
+        <mass value="${cwheel_mass}" />
+        <xacro:sphere_inertia r="${cwheel_radius}" m="${cwheel_mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <sphere radius="${cwheel_radius}" />
+        </geometry>
+        <material name="blue" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <sphere radius="${cwheel_radius}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="chassis_to_${prefix}_cwheel_joint" type="fixed">
+      <parent link="chassis" />
+      <child link="${prefix}_cwheel" />
+      <origin xyz="${x_reflect*((chassis_length/2.25)-cwheel_radius)} ${y_reflect*((chassis_width/2.25)-cwheel_radius+dwheel_width)} ${-((chassis_height/2)+cwheel_radius)}" rpy="0 0 0" />
+    </joint>
+
+  </xacro:macro>
+
+  <!-- Laser -->
+  <xacro:macro name="laser" params="prefix x_reflect y_reflect">
+
+    <link name="${prefix}_laser">
+      <inertial>
+        <mass value="${laser_mass}" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <xacro:cuboid_inertia l="${laser_side}" w="${laser_side}" h="${laser_side}" m="${laser_mass}" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${laser_side}" length="${laser_side}" />
+        </geometry>
+        <material name="yellow" />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${laser_side}" length="${laser_side}" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="chassis_to_${prefix}_laser_joint" type="fixed">
+      <parent link="chassis" />
+      <child link="${prefix}_laser" />
+      <xacro:if value="${x_reflect==1}">
+        <xacro:property name="yaw" value="${pi/4}" />
+      </xacro:if>
+      <xacro:if value="${x_reflect==-1}">
+        <xacro:property name="yaw" value="${pi*5/4}" />
+      </xacro:if>
+      <origin xyz="${x_reflect*((chassis_length/2)-laser_side)} ${y_reflect*(((chassis_width/2)-laser_side)+(dwheel_width*2))} ${((chassis_height/2)+(laser_side/2))}" rpy="${pi} 0 ${yaw}" />
+    </joint>
+
+  </xacro:macro>
+
+  <!-- Middle links -->
+  <xacro:macro name="alink" params="index height prev_height radius mass axis prev_axis">
+    <xacro:if value="${axis==0}">
+      <xacro:property name="gear_mass" value="${gear0_mass}" />
+      <xacro:property name="gear_radius" value="${gear0_radius}" />
+      <xacro:property name="gear_height" value="${gear0_height}" />
+    </xacro:if>
+    <xacro:if value="${axis==2}">
+      <xacro:property name="gear_mass" value="${gear2_mass}" />
+      <xacro:property name="gear_radius" value="${gear2_radius}" />
+      <xacro:property name="gear_height" value="${gear2_height}" />
+    </xacro:if>
+
+    <link name="alink${index}_gear">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${gear_radius}" length="${gear_height}" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${gear_radius}" length="${gear_height}" />
+        </geometry>
+        <material name="darkgrey" />
+      </visual>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="${gear_mass}" />
+        <xacro:cylinder_inertia r="${gear_radius}" h="${gear_height}" m="${gear_mass}" />
+      </inertial>
+    </link>
+    <joint name="alink${index-1}_to_alink${index}_gear_joint" type="revolute">
+      <axis xyz="0 0 1" rpy="0 0 0" />
+      <limit effort="30" velocity="1.0" lower="-2" upper="2" />
+      <xacro:if value="${axis==0}">
+        <xacro:if value="${prev_axis==0}">
+          <origin xyz="0 0 ${-((gear_radius) + (prev_height / 2))}" rpy="${-(pi/2)} 0 0" />
+        </xacro:if>
+        <xacro:if value="${prev_axis==2}">
+          <origin xyz="0 0 ${(gear_radius) + (prev_height / 2)}" rpy="${pi/2} 0 0" />
+        </xacro:if>
+      </xacro:if>
+      <xacro:if value="${axis==2}">
+        <xacro:if value="${prev_axis==0}">
+          <origin xyz="0 0 ${-((gear_height / 2) + (prev_height / 2))}" rpy="${pi} 0 0" />
+        </xacro:if>
+        <xacro:if value="${prev_axis==2}">
+          <origin xyz="0 0 ${(gear_height / 2) + (prev_height / 2)}" rpy="0 0 0" />
+        </xacro:if>
+      </xacro:if>
+      <parent link="alink${index-1}" />
+      <child link="alink${index}_gear" />
+    </joint>
+    <transmission name="alink${index-1}_to_alink${index}_gear_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="alink${index-1}_to_alink${index}_gear_joint">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="alink${index-1}_to_alink${index}_actuator">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </actuator>
+    </transmission>
+
+    <link name="alink${index}">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${radius}" length="${height}" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${radius}" length="${height}" />
+        </geometry>
+        <material name="darkgrey" />
+      </visual>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="${mass}" />
+        <xacro:cylinder_inertia r="${radius}" h="${height}" m="${mass}" />
+      </inertial>
+    </link>
+    <joint name="alink${index}_gear_to_alink${index}" type="fixed">
+      <xacro:if value="${axis==0}">
+        <origin xyz="0 ${(gear_radius) + (height / 2)} 0" rpy="${pi/2} 0 0" />
+      </xacro:if>
+      <xacro:if value="${axis==2}">
+        <origin xyz="0 0 ${(gear_height / 2) + (prev_height / 2)}" rpy="0 0 0" />
+      </xacro:if>
+      <parent link="alink${index}_gear" />
+      <child link="alink${index}" />
+    </joint>
+  </xacro:macro>
+
+</robot>
